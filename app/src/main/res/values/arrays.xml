@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="AccountType">
+        <item>작가</item>
+        <item>관람객</item>
+    </string-array>
+</resources>
