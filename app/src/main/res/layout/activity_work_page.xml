@@ -73,7 +73,7 @@
 
                     <TextView
                         android:id="@+id/textView22"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="작가" />
 
@@ -92,7 +92,7 @@
 
                     <TextView
                         android:id="@+id/textView23"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="작품 설명" />
 
@@ -111,7 +111,7 @@
 
                     <TextView
                         android:id="@+id/textView24"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="작품 위치" />
 

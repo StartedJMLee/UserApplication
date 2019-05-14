@@ -85,7 +85,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="1dp"
-                android:text="검색 결과" />
+                android:text="검색 결과"
+                android:textSize="18sp" />
 
 
         </TableRow>
@@ -96,12 +97,13 @@
             android:background="#ffffff"
 
             <TextView
-                android:id="@+id/textView18"
+                android:id="@+id/resultView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
                 android:gravity="center"
-                android:text="홍익대학교 컴퓨터공학과 졸업전시" />
+                android:text="홍익대학교 컴퓨터공학과 졸업전시"
+                android:textSize="18sp" />
 
 
         </TableRow>
@@ -112,12 +114,13 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView19"
+                android:id="@+id/resultView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dp"
                 android:gravity="center"
-                android:text="홍익대학교 컴퓨터공학과 졸전" />
+                android:text="홍익대학교 컴퓨터공학과 졸전"
+                android:textSize="18sp" />
 
         </TableRow>
 

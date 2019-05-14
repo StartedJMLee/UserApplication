@@ -26,6 +26,10 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     private Context context;
     private int itemLayout;
     private JSONArray commentarr;
+    //viewtype
+    private final int TYPE_AUD = 0; //audience
+    private final int TYPE_AUTH = 1; //author
+    private int status;
 
     //생성자
     public commentRecyclerAdapter(Context context, List<CardItem> dataList, int itemLayout, JSONArray commentarr){
@@ -37,9 +41,15 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-       View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_comment, parent, false); //xml을 자바객체로 변환, view를 생성
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+       View view;
+        if (viewType == TYPE_AUD) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.row_comment, parent, false); //xml을 자바객체로 변환, view를 생성
+        } else {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.row_comment_color, parent, false);
+        }
         return new ViewHolder(view); //생성한 view로 viewholder 생성해서 반환
     }
 
@@ -62,6 +72,14 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
         });
         */
     }
+    @Override
+    public int getItemViewType(int position) {
+        if (mDataList.get(position).getType() == 0){ //관객
+            return TYPE_AUD;
+        }else { //작가
+            return TYPE_AUTH;
+        }
+    }
 
     @Override
     public int getItemCount() {
@@ -73,16 +91,25 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
         TextView name;
         TextView contents;
         Button delete_btn;
+        Button reply_btn;
         //뷰홀더 생성자
         public  ViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.name);
             contents = itemView.findViewById(R.id.contents);
             delete_btn = itemView.findViewById(R.id.delete_btn);
+            reply_btn = itemView.findViewById(R.id.reply_btn);
             delete_btn.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override
                 public void onClick(View v) {
                     delete(getAdapterPosition());
+                }
+            });
+            reply_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //대댓글 기능 구현
                 }
             });
         }
