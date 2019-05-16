@@ -1,10 +1,13 @@
 package com.example.userapplication;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -40,6 +43,7 @@ public class Search2Activity extends AppCompatActivity {
     private ExhibitionSearchAdapter adapter;
     private ArrayList<String> mArraylist;
     private String postdata;
+    private String selectExname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +57,12 @@ public class Search2Activity extends AppCompatActivity {
 
         setExList();
 
-
-
         mArraylist = new ArrayList<>();
         mArraylist.addAll(exListData);
         adapter = new ExhibitionSearchAdapter(exListData,this);
         exListView.setAdapter(adapter);
 
+        //검색 기능 구현 ------------------------------------------
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -79,6 +82,17 @@ public class Search2Activity extends AppCompatActivity {
         });
 
 
+        exListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectExname = (String)adapter.getItem(position);
+              //  Intent intent = new Intent(Search2Activity.this, ...Activity.class);
+               // intent.putExtra("Exname", selectExname);
+               // startActivity(intent);
+
+
+            }
+        });
 
 
 
@@ -102,6 +116,7 @@ public class Search2Activity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    //데이터베이스에 저장되어 있는 전시 목록 불러오기
     public void setExList() {
 
         Getlist getlist = null;
@@ -122,7 +137,7 @@ public class Search2Activity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
+        // volley 이용시 동기식으로 통신할 방법이 없어 사용 불가
         /*Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -144,9 +159,9 @@ public class Search2Activity extends AppCompatActivity {
         queue.add(request);*/
     }
 
+
+    // -----서버와 통신 부분
     private class Getlist extends AsyncTask<String, Void, String> {
-
-
 
         @Override
         protected String doInBackground(String... strings) {
