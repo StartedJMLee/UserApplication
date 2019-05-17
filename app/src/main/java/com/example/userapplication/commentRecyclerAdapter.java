@@ -167,18 +167,10 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                         boolean success = jsonResponse.getBoolean("success");
 
                         if(success){
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            builder.setMessage("삭제되었습니다")
-                                    .setPositiveButton("확인", null)
-                                    .create()
-                                    .show();
+
                         }
                         else{
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                            builder.setMessage("삭제되지 않았습니다")
-                                    .setNegativeButton("다시 시도", null)
-                                    .create()
-                                    .show();
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -10,15 +10,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.RequestFuture;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,20 +18,18 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 public class Search2Activity extends AppCompatActivity {
 
-    private String TAG_JSON = "showexlist";
+    final static private String TAG_EXJSON = "showexlist";
     private List<String> exListData;
     private ListView exListView;
     private EditText editSearch;
-    private ExhibitionSearchAdapter adapter;
+    private SearchAdapter adapter;
     private ArrayList<String> mArraylist;
     private String postdata;
     private String selectExname;
@@ -50,7 +39,7 @@ public class Search2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search2);
 
-        editSearch = (EditText) findViewById(R.id.searchView);
+        editSearch = (EditText) findViewById(R.id.searchExView);
         exListView = (ListView) findViewById(R.id.exList);
 
         exListData = new ArrayList<String>();
@@ -59,7 +48,7 @@ public class Search2Activity extends AppCompatActivity {
 
         mArraylist = new ArrayList<>();
         mArraylist.addAll(exListData);
-        adapter = new ExhibitionSearchAdapter(exListData,this);
+        adapter = new SearchAdapter(exListData,this);
         exListView.setAdapter(adapter);
 
         //검색 기능 구현 ------------------------------------------
@@ -86,9 +75,9 @@ public class Search2Activity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectExname = (String)adapter.getItem(position);
-              //  Intent intent = new Intent(Search2Activity.this, ...Activity.class);
-               // intent.putExtra("Exname", selectExname);
-               // startActivity(intent);
+                Intent intent = new Intent(Search2Activity.this, SearchActivity.class);
+                intent.putExtra("exName", selectExname);
+                startActivity(intent);
 
 
             }
@@ -119,17 +108,17 @@ public class Search2Activity extends AppCompatActivity {
     //데이터베이스에 저장되어 있는 전시 목록 불러오기
     public void setExList() {
 
-        Getlist getlist = null;
+        GetExList getexlist = null;
         try {
-            getlist = new Getlist();
-            postdata = getlist.execute("http://lloasd33.cafe24.com/showexhibitionlist3.php").get();
+            getexlist = new GetExList();
+            postdata = getexlist.execute("http://lloasd33.cafe24.com/showexhibitionlist3.php").get();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
             JSONObject jsonObject = new JSONObject(postdata);
-            JSONArray jsonArray = jsonObject.getJSONArray(TAG_JSON);
+            JSONArray jsonArray = jsonObject.getJSONArray(TAG_EXJSON);
             for(int i = 0; i <jsonArray.length(); i++){
                 exListData.add(jsonArray.getJSONObject(i).getString("name"));
             }
@@ -161,7 +150,7 @@ public class Search2Activity extends AppCompatActivity {
 
 
     // -----서버와 통신 부분
-    private class Getlist extends AsyncTask<String, Void, String> {
+    private class GetExList extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... strings) {
