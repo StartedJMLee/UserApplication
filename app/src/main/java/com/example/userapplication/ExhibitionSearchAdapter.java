@@ -31,7 +31,7 @@ public class ExhibitionSearchAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return list.get(position);
     }
 
     @Override
@@ -53,6 +53,9 @@ public class ExhibitionSearchAdapter extends BaseAdapter {
         }
 
         viewHolder.label.setText(list.get(position));
+
+
+
 
         return convertView;
     }
