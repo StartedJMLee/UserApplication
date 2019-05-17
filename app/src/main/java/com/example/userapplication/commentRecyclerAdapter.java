@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -103,7 +110,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 @Override
                 public void onClick(View v) {
-                    delete(getAdapterPosition());
+                    deleteComment(getAdapterPosition());
                 }
             });
             reply_btn.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +123,9 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    void delete(int pos){
+
+
+    void deleteComment(int pos){
         try {
             Toast.makeText(context,"코멘트 삭제", Toast.LENGTH_SHORT).show();
             mDataList.remove(pos);
@@ -128,5 +137,49 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
         //json
         commentarr.remove(pos);
 
+    }
+
+    void addComment(String userID, String comment, int id, String workName){
+            mDataList.add(0,new CardItem( userID, comment, status));
+            this.notifyItemInserted(0);
+            Toast.makeText(context,"코멘트 등록",Toast.LENGTH_SHORT).show();
+            //json
+            JSONObject commentjs = new JSONObject();
+            try {
+                commentjs.put(userID,comment);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            commentarr.put(commentjs);
+
+            Response.Listener<String> listener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean success = jsonResponse.getBoolean("success");
+
+                        if(success){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setMessage("삭제되었습니다")
+                                    .setPositiveButton("확인", null)
+                                    .create()
+                                    .show();
+                        }
+                        else{
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setMessage("삭제되지 않았습니다")
+                                    .setNegativeButton("다시 시도", null)
+                                    .create()
+                                    .show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            WorkCommentRequest workCommentRequest = new WorkCommentRequest(userID, workName, mDataList.get(0).getContents(), id, listener);
+            RequestQueue queue = Volley.newRequestQueue(context);
+            queue.add(workCommentRequest);
     }
 }
