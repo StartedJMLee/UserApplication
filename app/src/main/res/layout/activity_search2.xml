@@ -8,7 +8,7 @@
     android:windowSoftInputMode="adjustPan">
 
     <TextView
-        android:id="@+id/textView14"
+        android:id="@+id/selectedExname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -40,10 +40,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView14" />
+        app:layout_constraintTop_toBottomOf="@+id/selectedExname" />
 
     <EditText
-        android:id="@+id/searchView"
+        android:id="@+id/searchExView"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -72,7 +72,7 @@
 
     <LinearLayout
         android:layout_width="395dp"
-        android:layout_height="311dp"
+        android:layout_height="420dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -84,7 +84,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView">
+        app:layout_constraintTop_toBottomOf="@+id/searchExView">
 
         <TextView
             android:id="@+id/textView18"
@@ -100,7 +100,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0"
             android:windowSoftInputMode="adjustPan"
-            tools:listitem="@layout/row_exhibitionlist" />
+            tools:listitem="@layout/row_searchlist" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

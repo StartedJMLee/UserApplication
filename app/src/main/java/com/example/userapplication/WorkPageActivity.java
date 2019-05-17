@@ -64,7 +64,7 @@ public class WorkPageActivity extends AppCompatActivity {
         // makeAccountActivity에서 : 작가로 계정 생성 시 전시프로젝트에서 등록한 메일과 match해서 권한 검증하고, 작품 id랑 작가 id 연결시킴.
         //연결한 작품id와 work객체의 id 일치하는지 확인해서 일치하면 status 1, 아니면 status 0.
         //결과적으로 작가 status인 페이지에서는 파란 뷰타입으로 댓글이 달리고 관객 status인 페이지에서는 일반 뷰타입으로 댓글 달 수 있음.
-        if (id ==0) {status = 1;} else {status = 0;}; //일단 작품 0의 작가인 걸로 가정.
+        if (id ==0) {status = 1;} else {status = 0;} //일단 작품 0의 작가인 걸로 가정.
 
         //위젯
         workname.setText(work.getName());
