@@ -38,7 +38,8 @@ public class WorkPageActivity extends AppCompatActivity {
     //임시 변수
     private int id; //임시 변수
     private List<CardItem> dummyComment;
-    /*
+
+    //get&set
     public int getStatus() {
         return status;
     }
@@ -54,7 +55,7 @@ public class WorkPageActivity extends AppCompatActivity {
     public void setUserID(String userID) {
         this.userID = userID;
     }
-    */
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
