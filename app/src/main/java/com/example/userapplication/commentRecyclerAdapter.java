@@ -37,13 +37,16 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     private final int TYPE_AUD = 0; //audience
     private final int TYPE_AUTH = 1; //author
     private int status;
+    private WorkPageActivity workPageActivity;
 
     //생성자
-    public commentRecyclerAdapter(Context context, List<CardItem> dataList, int itemLayout, JSONArray commentarr){
+    public commentRecyclerAdapter(WorkPageActivity work, Context context, List<CardItem> dataList, int itemLayout, JSONArray commentarr){
         mDataList = dataList;
         this.context = context;
         this.itemLayout = itemLayout;
         this.commentarr = commentarr;
+        this.workPageActivity = work;
+        this.status = work.getStatus();
     }
 
     @NonNull
@@ -125,21 +128,25 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 
 
-    void deleteComment(int pos){
-        try {
-            Toast.makeText(context,"코멘트 삭제", Toast.LENGTH_SHORT).show();
-            mDataList.remove(pos);
-            notifyItemRemoved(pos);
-            notifyItemRangeChanged(pos, mDataList.size());
-        } catch(IndexOutOfBoundsException ex) {
-            ex.printStackTrace();
+    void deleteComment(int pos) {
+        if (workPageActivity.getUserID() == mDataList.get(pos).getName()) {
+            try {
+                Toast.makeText(context, "코멘트 삭제", Toast.LENGTH_SHORT).show();
+                mDataList.remove(pos);
+                notifyItemRemoved(pos);
+                notifyItemRangeChanged(pos, mDataList.size());
+                //json
+                commentarr.remove(pos);
+            } catch (IndexOutOfBoundsException ex) {
+                ex.printStackTrace();
+            }
         }
-        //json
-        commentarr.remove(pos);
-
+        else {
+            Toast.makeText(context, "삭제할 권한이 없습니다", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    void addComment(String userID, String comment, int id, String workName){
+    void addComment(String userID, String comment, int id, String workName){ //대댓글 기능 구현 위해 position추가
             mDataList.add(0,new CardItem( userID, comment, status));
             this.notifyItemInserted(0);
             Toast.makeText(context,"코멘트 등록",Toast.LENGTH_SHORT).show();

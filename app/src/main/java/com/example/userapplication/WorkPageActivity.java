@@ -29,53 +29,82 @@ public class WorkPageActivity extends AppCompatActivity {
     private TextView workname, workaccount_view, workauthor_view, worksite_view;
     private Button add_btn;
     private EditText editComment;
+
     private String userID;
-
-    private int status; //0:관람객 1:작가
-    private int id;
+    private VisitedPages visitedPages;
     private Work work;
+    private int status; //0:관람객 1:작가
 
+    //임시 변수
+    private int id; //임시 변수
+    private List<CardItem> dummyComment;
+    /*
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work_page);
+        String workName = getIntent().getStringExtra("workName");
 
+        //View Binding
         workname = findViewById(R.id.workname);
         workaccount_view = findViewById(R.id.workaccount_view);
         workauthor_view = findViewById(R.id.workauthor_view);
         worksite_view = findViewById(R.id.worksite_view);
 
-        String workName = getIntent().getStringExtra("workName"); //예외처리 필요
+        //visitedPages 싱글톤
+        visitedPages.getInstance();
+
         //테스트용 값 ---------------------
         id = 0;
         //---------------------------------
-        //수정요망
-        //Work 더미데이터 - 서버에서 id에 따라 값 불러와 생성자로 Work 객체 만드는 걸로 수정.
-        //코멘트 불러오는거 만들어야함...
+
+        // -  더미데이터
         if (id == 0) {
-            work = new Work(id, "Bigmouth Strikes Again", "The Smiths", "Morrisey & Marr", "Menchester");
-        } else if (id == 1) {
-            work = new Work(id, "Blue Monday", "New Order", "Post Joy Division", "Menchester");
+            work = new Work(id, workName, "The Smiths", "Morrisey & Marr", "Menchester");
+            visitedPages.addToVisitedWorkNames(workName);
+
         }
+        /*else if (id == 1) {
+            work = new Work(id, "Blue Monday", "New Order", "Post Joy Division", "Menchester");
+            visitedPages.addToVisitedWorkNames("Blue Monday");
+        }*/
+
         //계정
         userID = "tempID";
+
         //유저id와 작품의 작가id를 match하여 status 판단하는 함수필요.
-        // makeAccountActivity에서 : 작가로 계정 생성 시 전시프로젝트에서 등록한 메일과 match해서 권한 검증하고, 작품 id랑 작가 id 연결시킴.
-        //연결한 작품id와 work객체의 id 일치하는지 확인해서 일치하면 status 1, 아니면 status 0.
-        //결과적으로 작가 status인 페이지에서는 파란 뷰타입으로 댓글이 달리고 관객 status인 페이지에서는 일반 뷰타입으로 댓글 달 수 있음.
+        /*makeAccountActivity에서 : 작가로 계정 생성 시 전시프로젝트에서 등록한 메일과 match해서 권한 검증하고, 작품 id랑 작가 id 연결시킴.
+        연결한 작품id와 work객체의 id 일치하는지 확인해서 일치하면 status 1, 아니면 status 0.
+        결과적으로 작가 status인 페이지에서는 파란 뷰타입으로 댓글이 달리고 관객 status인 페이지에서는 일반 뷰타입으로 댓글 달 수 있음. */
+
+        //임시 status
         if (id == 0) {
             status = 1;
         } else {
             status = 0;
         }
-        ; //일단 작품 0의 작가인 걸로 가정.
 
-        //위젯
+        //work information view
         workname.setText(work.getName());
         workaccount_view.setText(work.getAccount());
         workauthor_view.setText(work.getAuthor());
         worksite_view.setText(work.getSite());
-
 
         //RecyclerView
         RecyclerView recyclerView = findViewById(R.id.comment_recycler);
@@ -86,19 +115,21 @@ public class WorkPageActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         //Make DataList ( CardItem 객체 리스트)
-        //서버에서 댓글 가져오는 부분 추가.
         final List<CardItem> dataList = new ArrayList<>();
         final JSONArray commentarr = new JSONArray();
-        //dataList.add(new CardItem(i + "번째", "댓글내용" + i));
-        /*
-        for (int i = 0; i < 5; i++) {
-            dataList.add(new CardItem(i + "번째", "댓글내용" + i));
-        }
-        */
 
+        //댓글 불러오기 더미데이터로 구현(서버 추가)
+        for (int i = 0; i < 5; i++) {
+            dummyComment.add(new CardItem(i + "번째", "댓글내용" + i,0));
+        }
+        if (!dummyComment.isEmpty()){
+            for (int i = 0; i < dummyComment.size(); i++) {
+            dataList.add(new CardItem(i + "번째", "댓글내용" + i,0));
+            }
+        }
 
         //Adapter
-        final commentRecyclerAdapter adapter = new commentRecyclerAdapter(this, dataList, R.layout.row_comment, commentarr);
+        final commentRecyclerAdapter adapter = new commentRecyclerAdapter(this,this, dataList, R.layout.row_comment, commentarr); //어댑터 수정
         recyclerView.setAdapter(adapter);
 
         //코멘트 등록
@@ -111,6 +142,7 @@ public class WorkPageActivity extends AppCompatActivity {
                 adapter.addComment(userID,comment,id,work.getName());
             }
         });
+
     }
 }
 
