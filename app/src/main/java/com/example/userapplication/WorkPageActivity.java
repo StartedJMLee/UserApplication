@@ -1,6 +1,7 @@
 package com.example.userapplication;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,22 +23,32 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class WorkPageActivity extends AppCompatActivity {
     private TextView workname, workaccount_view, workauthor_view, worksite_view;
     private Button add_btn;
     private EditText editComment;
 
+    final static private String TAG_COMMENTJSON = "showcommentlist";
     private String userID;
+    private String workName;
     private VisitedPages visitedPages;
     private Work work;
     private int status; //0:관람객 1:작가
 
     //임시 변수
     private int id; //임시 변수
-    private List<CardItem> dummyComment;
+    private List<CardItem> savedCommentDate;
+    private List<CardItem> commentData;
 
     //get&set
     public int getStatus() {
@@ -60,13 +71,20 @@ public class WorkPageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work_page);
-        String workName = getIntent().getStringExtra("workName");
+        workName = getIntent().getStringExtra("workname");
+        status = getIntent().getIntExtra("usertype",0);
+        userID = getIntent().getStringExtra("userID");
 
         //View Binding
         workname = findViewById(R.id.workname);
         workaccount_view = findViewById(R.id.workaccount_view);
         workauthor_view = findViewById(R.id.workauthor_view);
         worksite_view = findViewById(R.id.worksite_view);
+
+        savedCommentDate = new ArrayList<>();
+        setSavedData();
+        List<CardItem> dataList = new ArrayList<>();
+        dataList.addAll(savedCommentDate);
 
         //visitedPages 싱글톤
         visitedPages.getInstance();
@@ -78,7 +96,7 @@ public class WorkPageActivity extends AppCompatActivity {
         // -  더미데이터
         if (id == 0) {
             work = new Work(id, workName, "The Smiths", "Morrisey & Marr", "Menchester");
-            visitedPages.addToVisitedWorkNames(workName);
+          //  visitedPages.addToVisitedWorkNames(workName);
 
         }
         /*else if (id == 1) {
@@ -87,7 +105,7 @@ public class WorkPageActivity extends AppCompatActivity {
         }*/
 
         //계정
-        userID = "tempID";
+        //userID = "tempID";
 
         //유저id와 작품의 작가id를 match하여 status 판단하는 함수필요.
         /*makeAccountActivity에서 : 작가로 계정 생성 시 전시프로젝트에서 등록한 메일과 match해서 권한 검증하고, 작품 id랑 작가 id 연결시킴.
@@ -95,11 +113,7 @@ public class WorkPageActivity extends AppCompatActivity {
         결과적으로 작가 status인 페이지에서는 파란 뷰타입으로 댓글이 달리고 관객 status인 페이지에서는 일반 뷰타입으로 댓글 달 수 있음. */
 
         //임시 status
-        if (id == 0) {
-            status = 1;
-        } else {
-            status = 0;
-        }
+
 
         //work information view
         workname.setText(work.getName());
@@ -116,18 +130,18 @@ public class WorkPageActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         //Make DataList ( CardItem 객체 리스트)
-        final List<CardItem> dataList = new ArrayList<>();
+
         final JSONArray commentarr = new JSONArray();
 
         //댓글 불러오기 더미데이터로 구현(서버 추가)
-        for (int i = 0; i < 5; i++) {
-            dummyComment.add(new CardItem(i + "번째", "댓글내용" + i,0));
-        }
-        if (!dummyComment.isEmpty()){
-            for (int i = 0; i < dummyComment.size(); i++) {
-            dataList.add(new CardItem(i + "번째", "댓글내용" + i,0));
-            }
-        }
+     //   for (int i = 0; i < 5; i++) {
+       //     dummyComment.add(new CardItem(i + "번째", "댓글내용" + i,0));
+        //}
+        //if (!dummyComment.isEmpty()){
+         //   for (int i = 0; i < dummyComment.size(); i++) {
+          //  dataList.add(new CardItem(i + "번째", "댓글내용" + i,0));
+           // }
+       // }
 
         //Adapter
         final commentRecyclerAdapter adapter = new commentRecyclerAdapter(this,this, dataList, R.layout.row_comment, commentarr); //어댑터 수정
@@ -145,5 +159,77 @@ public class WorkPageActivity extends AppCompatActivity {
         });
 
     }
+
+   public void setSavedData(){
+        GetCommentList getCommentList = new GetCommentList();
+        String postdata = null;
+
+        try {
+            postdata = getCommentList.execute("http://lloasd33.cafe24.com/showcommentlist.php", workName).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+       try {
+           JSONObject jsonObject = new JSONObject(postdata);
+           JSONArray jsonArray = jsonObject.getJSONArray(TAG_COMMENTJSON);
+           for (int i = 0; i < jsonArray.length(); i++) {
+                CardItem cardItem = new CardItem(jsonArray.getJSONObject(i).getString("userID"), jsonArray.getJSONObject(i).getString("comment"),jsonArray.getJSONObject(i).getInt("usertype"));
+               savedCommentDate.add(cardItem);
+           }
+       } catch (JSONException e) {
+           e.printStackTrace();
+       }
+    }
+
+    private class GetCommentList extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String result = null;
+            try {
+                String url = strings[0];
+                String workname = strings[1];
+                URL URLObject = new URL(url);
+                HttpURLConnection con = (HttpURLConnection) URLObject.openConnection();
+
+                String postparam = "workname=" + workname;
+
+                con.setRequestMethod("POST");
+                con.setDoInput(true);
+                con.setDoOutput(true);
+                con.connect();
+
+                OutputStream outputStream = con.getOutputStream();
+                outputStream.write(postparam.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                InputStream inputStream = con.getInputStream();
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+
+                result =  sb.toString();
+                return result;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return  null;
+            }
+
+        }
+    }
 }
+
+
 

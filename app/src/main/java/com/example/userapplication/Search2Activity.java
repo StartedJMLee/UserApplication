@@ -25,6 +25,8 @@ import java.util.List;
 
 public class Search2Activity extends AppCompatActivity {
 
+    private String userID;
+    private int usertype;
     final static private String TAG_EXJSON = "showexlist";
     private List<String> exListData;
     private ListView exListView;
@@ -41,6 +43,9 @@ public class Search2Activity extends AppCompatActivity {
 
         editSearch = (EditText) findViewById(R.id.searchExView);
         exListView = (ListView) findViewById(R.id.exList);
+
+        userID = getIntent().getStringExtra("userID");
+        usertype = getIntent().getIntExtra("usertype", 0);
 
         exListData = new ArrayList<String>();
 
@@ -77,6 +82,8 @@ public class Search2Activity extends AppCompatActivity {
                 selectExname = (String)adapter.getItem(position);
                 Intent intent = new Intent(Search2Activity.this, SearchActivity.class);
                 intent.putExtra("exName", selectExname);
+                intent.putExtra("userID", userID);
+                intent.putExtra("usertype", usertype);
                 startActivity(intent);
 
 

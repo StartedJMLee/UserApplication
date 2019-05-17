@@ -181,4 +181,8 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
             RequestQueue queue = Volley.newRequestQueue(context);
             queue.add(workCommentRequest);
     }
+
+    void setmDataList(Work work){
+
+    }
 }

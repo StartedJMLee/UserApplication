@@ -27,6 +27,8 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
+    private String userID;
+    private int usertype;
     final static private String TAG_WORKJSON = "showworklist";
     private TextView exTextView;
     private List<String> workListData;
@@ -50,6 +52,9 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = getIntent();
         exName = intent.getStringExtra("exName");
         exTextView.setText(exName);
+        userID = getIntent().getStringExtra("userID");
+        usertype = getIntent().getIntExtra("usertype", 0);
+
 
         workListData = new ArrayList<>();
 
@@ -84,6 +89,8 @@ public class SearchActivity extends AppCompatActivity {
                 selectWorkname = (String)adapter.getItem(position);
                 Intent intent = new Intent(SearchActivity.this, WorkPageActivity.class);
                 intent.putExtra("workname", selectWorkname);
+                intent.putExtra("userID", userID);
+                intent.putExtra("usertype", usertype);
                 startActivity(intent);
             }
         });
