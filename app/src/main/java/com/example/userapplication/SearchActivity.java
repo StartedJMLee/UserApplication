@@ -32,6 +32,10 @@ public class SearchActivity extends AppCompatActivity {
     final static private String TAG_WORKJSON = "showworklist";
     private TextView exTextView;
     private List<String> workListData;
+    private List<String> authornameData;
+    private List<String> workdescriptionData;
+    private List<String> worksectorData;
+
     private ListView workListView;
     private EditText editSearch;
     private SearchAdapter adapter;
@@ -57,6 +61,9 @@ public class SearchActivity extends AppCompatActivity {
 
 
         workListData = new ArrayList<>();
+        authornameData = new ArrayList<>();
+        workdescriptionData = new ArrayList<>();
+        worksectorData = new ArrayList<>();
 
         setWorkList();
 
@@ -87,10 +94,17 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectWorkname = (String)adapter.getItem(position);
+                int pos = mArraylist.indexOf(selectWorkname);
+
+                // workPageActivity에 필요한 정보들, qr코드로 들어가는 부분에도 이 정보들을 workPageActivity에 보내야 함
                 Intent intent = new Intent(SearchActivity.this, WorkPageActivity.class);
                 intent.putExtra("workname", selectWorkname);
                 intent.putExtra("userID", userID);
                 intent.putExtra("usertype", usertype);
+                // 정보들 하나의 class로 만들어서 관리할 수 있는데 일단 작동되는지 보려고 이렇게 구현했습니다
+                intent.putExtra("authorname", authornameData.get(pos));
+                intent.putExtra("workdescription", workdescriptionData.get(pos));
+                intent.putExtra("worksector", worksectorData.get(pos));
                 startActivity(intent);
             }
         });
@@ -121,7 +135,7 @@ public class SearchActivity extends AppCompatActivity {
         GetWorkList getWorkList = null;
         try {
             getWorkList = new GetWorkList();
-            postdata = getWorkList.execute("http://lloasd33.cafe24.com/showworklist.php",exName).get();
+            postdata = getWorkList.execute("http://lloasd33.cafe24.com/showworklist2.php",exName).get();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,6 +145,9 @@ public class SearchActivity extends AppCompatActivity {
             JSONArray jsonArray = jsonObject.getJSONArray(TAG_WORKJSON);
             for (int i = 0; i < jsonArray.length(); i++) {
                 workListData.add(jsonArray.getJSONObject(i).getString("workname"));
+                authornameData.add(jsonArray.getJSONObject(i).getString("authorname"));
+                workdescriptionData.add(jsonArray.getJSONObject(i).getString("workdescription"));
+                worksectorData.add(jsonArray.getJSONObject(i).getString("worksector"));
             }
         } catch (JSONException e) {
             e.printStackTrace();

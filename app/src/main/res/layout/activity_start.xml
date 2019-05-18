@@ -100,11 +100,4 @@
         app:layout_constraintTop_toBottomOf="@+id/makeAccount_btn"
         app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name"
-        tools:layout_editor_absoluteX="520dp"
-        tools:layout_editor_absoluteY="677dp" />
 </android.support.constraint.ConstraintLayout>

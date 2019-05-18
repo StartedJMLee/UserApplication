@@ -47,13 +47,14 @@ public class WorkPageActivity extends AppCompatActivity {
     private String site;
     //권한 관련
     private String userID;
+    private int usertype;
 
-    private Work work;
+
     private int status; //0:관람객 1:작가
     //싱글톤 객체
     private VisitedPages visitedPages;
     //임시 변수
-    private int id; //임시 변수
+   // private int id; //임시 변수
     private List<CardItem> savedCommentDate;
     private List<CardItem> commentData;
 
@@ -64,8 +65,12 @@ public class WorkPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work_page);
         workName = getIntent().getStringExtra("workname");
-        status = getIntent().getIntExtra("usertype",0);
+        usertype = getIntent().getIntExtra("usertype",0);
         userID = getIntent().getStringExtra("userID");
+        author = getIntent().getStringExtra("authorname");
+        account = getIntent().getStringExtra("workdescription");
+        site = getIntent().getStringExtra("worksector");
+
 
         //View Binding
         workname = findViewById(R.id.workname);
@@ -75,40 +80,31 @@ public class WorkPageActivity extends AppCompatActivity {
 
         savedCommentDate = new ArrayList<>();
         setSavedData();
-        List<CardItem> dataList = new ArrayList<>();
-        dataList.addAll(savedCommentDate);
+        commentData = new ArrayList<>();
+        commentData.addAll(savedCommentDate);
 
         //visitedPages 싱글톤
         visitedPages.getInstance();
 
-        //테스트용 값 ---------------------
-        id = 0;
-        //---------------------------------
 
-        // -  더미데이터
-        if (id == 0) {
-            work = new Work(id, workName, "The Smiths", "Morrisey & Marr", "Menchester");
+
           //  visitedPages.addToVisitedWorkNames(workName);
 
 
-        }
-
-
-        //계정
-        //userID = "tempID";
-        //테스트용 값 ---------------------
-       // status = 0;
-        author = "The Smiths";
-        account = "Morrisey & Marr";
-        site = "Menchester";
-        //userID = "tempID";
-        //---------------------------------
 
         //status 판단 함수
         /*유저id와 작품의 작가id를 match하여 status 판단하는 함수필요.
         makeAccountActivity에서 : 작가로 계정 생성 시 전시프로젝트에서 등록한 메일과 match해서 권한 검증하고, 작품 id랑 작가 id 연결시킴.
         연결한 작품id와 work객체의 id 일치하는지 확인해서 일치하면 status 1, 아니면 status 0.
         결과적으로 작가 status인 페이지에서는 파란 뷰타입으로 댓글이 달리고 관객 status인 페이지에서는 일반 뷰타입으로 댓글 달 수 있음. */
+
+        /*
+        status 선택 함수 구현 완료
+
+        usertype 은 회원 가입할 때 작가 선택할 시 usertype = 1로 저장되고 관람객은 0으로 저장되도록 변경했습니다 . 변경 전에는 작가 = 0 관람객 = 1 로 저장되었었습니다
+         */
+
+        status = SetStatus(userID, workName);
 
         //임시 status
 
@@ -142,7 +138,7 @@ public class WorkPageActivity extends AppCompatActivity {
        // }
 
         //Adapter
-        final commentRecyclerAdapter adapter = new commentRecyclerAdapter(workName,userID, this, dataList, R.layout.row_comment, commentarr, status); //어댑터 수정
+        final commentRecyclerAdapter adapter = new commentRecyclerAdapter(workName,userID, this, commentData, R.layout.row_comment, commentarr, status); //어댑터 수정
         recyclerView.setAdapter(adapter);
 
         //코멘트 등록
@@ -173,8 +169,8 @@ public class WorkPageActivity extends AppCompatActivity {
            JSONObject jsonObject = new JSONObject(postdata);
            JSONArray jsonArray = jsonObject.getJSONArray(TAG_COMMENTJSON);
            for (int i = 0; i < jsonArray.length(); i++) {
-                CardItem cardItem = new CardItem(jsonArray.getJSONObject(i).getString("userID"), jsonArray.getJSONObject(i).getString("comment"),jsonArray.getJSONObject(i).getInt("usertype"));
-               savedCommentDate.add(cardItem);
+                CardItem cardItem = new CardItem(jsonArray.getJSONObject(i).getString("userID"), jsonArray.getJSONObject(i).getString("comment"),jsonArray.getJSONObject(i).getInt("status"));
+               savedCommentDate.add(0,cardItem);
            }
        } catch (JSONException e) {
            e.printStackTrace();
@@ -193,6 +189,87 @@ public class WorkPageActivity extends AppCompatActivity {
                 HttpURLConnection con = (HttpURLConnection) URLObject.openConnection();
 
                 String postparam = "workname=" + workname;
+
+                con.setRequestMethod("POST");
+                con.setDoInput(true);
+                con.setDoOutput(true);
+                con.connect();
+
+                OutputStream outputStream = con.getOutputStream();
+                outputStream.write(postparam.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                InputStream inputStream = con.getInputStream();
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+
+                result =  sb.toString();
+                return result;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return  null;
+            }
+
+        }
+    }
+
+
+    // ------------------ 로그인 해 있는 user의 id와 선택한 작품의 workname을 이용해 선택한 작품이 로그인한 유저의 작품인지 선택
+    public int SetStatus(String userID, String workname){
+        Getcomparison getcomparison = new Getcomparison();
+        String postdata = null;
+        boolean success = true;
+        try {
+            postdata = getcomparison.execute("http://lloasd33.cafe24.com/comparison.php", userID, workname).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        try {
+            JSONObject jsonResponse = new JSONObject(postdata);
+
+            success = jsonResponse.getBoolean("success");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        // usertype이 0이면 관람객이므로 무조건 status는 0
+        if(usertype == 0){return 0;}
+        else {
+            // 선택 작품이 로그인한 유저의 작품이면 success = true 로 값 적용됨
+            if (success) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    //Setstatus의 서버 통신 부분
+    private class Getcomparison extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String result = null;
+            try {
+                String url = strings[0];
+                String userID = strings[1];
+                String workname = strings[2];
+                URL URLObject = new URL(url);
+                HttpURLConnection con = (HttpURLConnection) URLObject.openConnection();
+
+                String postparam = "userID=" + userID + "&workname=" + workname;
 
                 con.setRequestMethod("POST");
                 con.setDoInput(true);

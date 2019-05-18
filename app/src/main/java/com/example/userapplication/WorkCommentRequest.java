@@ -15,13 +15,13 @@ public class WorkCommentRequest extends StringRequest {
     private Map<String, String> parameter;
 
 
-    public WorkCommentRequest(String userID, String workname, String comment, int usertype, Response.Listener<String> listener){
+    public WorkCommentRequest(String userID, String workname, String comment, int status, Response.Listener<String> listener){
         super(Method.POST, URL, listener, null);
         parameter = new HashMap();
         parameter.put("userID", userID);
         parameter.put("workname", workname);
         parameter.put("comment", comment);
-        parameter.put("usertype", String.valueOf(usertype));
+        parameter.put("status", String.valueOf(status));
     }
 
     @Override

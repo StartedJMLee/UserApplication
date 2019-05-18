@@ -38,6 +38,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     private int status;
     private String workName;
     private String userID;
+
     //viewtype
     private final int TYPE_AUD = 0; //audience
     private final int TYPE_AUTH = 1; //author
@@ -141,7 +142,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
 
 
     void deleteComment(int pos) {
-        if (userID == mDataList.get(pos).getName()) {
+        if (userID.equals(mDataList.get(pos).getName())) {
             try {
                 Toast.makeText(context, "코멘트 삭제", Toast.LENGTH_SHORT).show();
                 mDataList.remove(pos);
@@ -152,6 +153,8 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
             } catch (IndexOutOfBoundsException ex) {
                 ex.printStackTrace();
             }
+
+
         }
         else {
             Toast.makeText(context, "삭제할 권한이 없습니다", Toast.LENGTH_SHORT).show();
@@ -194,7 +197,5 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
             queue.add(workCommentRequest);
     }
 
-    void setmDataList(Work work){
 
-    }
 }

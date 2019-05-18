@@ -43,11 +43,11 @@ public class makeAccountActivity extends AppCompatActivity {
                 int type;
                 if(typeChoice.getSelectedItem().toString().equals("작가"))
                 {
-                    type = 0;
+                    type = 1;
                 }
                 else
                 {
-                    type = 1;
+                    type = 0;
                 }
 
                 Response.Listener<String> listener = new Response.Listener<String>() {

@@ -6,11 +6,13 @@ import android.support.annotation.RequiresApi;
 import java.util.Objects;
 
 public class CardItem {
+
     private String name;
     private String contents;
     private int type; //관람객0, 작가1
 
     public CardItem(String name, String contents, int type) {
+
         this.name = name;
         this.contents = contents;
         this.type = type;
