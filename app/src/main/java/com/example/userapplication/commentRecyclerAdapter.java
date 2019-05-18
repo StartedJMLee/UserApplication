@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import java.util.List;
 import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
 import static com.example.userapplication.R.id.delete_btn;
+import static com.example.userapplication.R.id.workname;
 
 
 public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecyclerAdapter.ViewHolder> {
@@ -33,20 +35,22 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     private Context context;
     private int itemLayout;
     private JSONArray commentarr;
+    private int status;
+    private String workName;
+    private String userID;
     //viewtype
     private final int TYPE_AUD = 0; //audience
     private final int TYPE_AUTH = 1; //author
-    private int status;
-    private WorkPageActivity workPageActivity;
 
-    //생성자
-    public commentRecyclerAdapter(WorkPageActivity work, Context context, List<CardItem> dataList, int itemLayout, JSONArray commentarr){
+    //생성자 - 값 전달
+    public commentRecyclerAdapter(String workName, String userID, Context context, List<CardItem> dataList, int itemLayout, JSONArray commentarr, int status){
         mDataList = dataList;
+        this.workName = workName;
         this.context = context;
         this.itemLayout = itemLayout;
         this.commentarr = commentarr;
-        this.workPageActivity = work;
-        this.status = work.getStatus();
+        this.status = status;
+        this.userID = userID;
     }
 
     @NonNull
@@ -69,19 +73,8 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
         CardItem item = mDataList.get(position);
         viewHolder.name.setText(item.getName());
         viewHolder.contents.setText(item.getContents());
-        /*
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //if(v.getId()== delete_btn){
-                    Toast.makeText(context,"삭제됨", Toast.LENGTH_SHORT).show();
-                    mDataList.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, mDataList.size());
-                }
-        });
-        */
     }
+
     @Override
     public int getItemViewType(int position) {
         if (mDataList.get(position).getType() == 0){ //관객
@@ -120,6 +113,25 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                 @Override
                 public void onClick(View v) {
                     //대댓글 기능 구현
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    // 다이얼로그를 보여주기 위해 xml 파일을 사용
+                    View view = LayoutInflater.from(context)
+                            .inflate(R.layout.comment_dialog, null, false);
+                    builder.setView(view);
+                    final Button replyEdit_btn = (Button) view.findViewById(R.id.reply_btn);
+                    final EditText replyEditText = (EditText) view.findViewById(R.id.replyEditText);
+
+                    //대댓글 등록
+                    replyEditText.setText(mDataList.get(getAdapterPosition()).getName());
+                     final AlertDialog dialog = builder.create();
+                        replyEdit_btn.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                String comment = replyEditText.getText().toString();
+                                addComment(userID, comment, workName);
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
                 }
             });
         }
@@ -129,7 +141,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
 
 
     void deleteComment(int pos) {
-        if (workPageActivity.getUserID() == mDataList.get(pos).getName()) {
+        if (userID == mDataList.get(pos).getName()) {
             try {
                 Toast.makeText(context, "코멘트 삭제", Toast.LENGTH_SHORT).show();
                 mDataList.remove(pos);
@@ -146,7 +158,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
         }
     }
 
-    void addComment(String userID, String comment, int id, String workName){ //대댓글 기능 구현 위해 position추가
+    void addComment(String userID, String comment, String workName){ //대댓글 기능 구현 위해 position추가
             mDataList.add(0,new CardItem( userID, comment, status));
             this.notifyItemInserted(0);
             Toast.makeText(context,"코멘트 등록",Toast.LENGTH_SHORT).show();
@@ -177,7 +189,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                     }
                 }
             };
-            WorkCommentRequest workCommentRequest = new WorkCommentRequest(userID, workName, mDataList.get(0).getContents(), id, listener);
+            WorkCommentRequest workCommentRequest = new WorkCommentRequest(userID, workName, mDataList.get(0).getContents(), 0, listener); //수정 필요
             RequestQueue queue = Volley.newRequestQueue(context);
             queue.add(workCommentRequest);
     }
