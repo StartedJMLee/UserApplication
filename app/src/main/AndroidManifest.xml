@@ -13,10 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Search2Activity"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".SearchActivity"
-            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".NotificationActivity"></activity>
+        <activity
+            android:name=".Search2Activity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".SearchActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".MailActivity" />
         <activity android:name=".WorkPageActivity" />
         <activity android:name=".Main2Activity" />

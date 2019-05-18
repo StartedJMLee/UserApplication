@@ -38,7 +38,6 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     private int status;
     private String workName;
     private String userID;
-
     //viewtype
     private final int TYPE_AUD = 0; //audience
     private final int TYPE_AUTH = 1; //author
@@ -124,15 +123,18 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
 
                     //대댓글 등록
                     replyEditText.setText("To" + mDataList.get(getAdapterPosition()).getName() + " : ");
-                     final AlertDialog dialog = builder.create();
-                        replyEdit_btn.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                String comment = replyEditText.getText().toString();
-                                addComment(userID, comment, workName);
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
+                    final AlertDialog dialog = builder.create();
+                    replyEdit_btn.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            String comment = replyEditText.getText().toString();
+                            addComment(userID, comment, workName);
+                            dialog.dismiss();
+
+                            //여기에 notification보내는 코드 삽입
+                            //조건 판정 - 일단 구현 후 추가.
+                        }
+                    });
+                    dialog.show();
                 }
             });
         }
@@ -161,14 +163,15 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
         }
     }
 
-    void addComment(String userID, String comment, String workName){ //대댓글 기능 구현 위해 position추가
-            mDataList.add(0,new CardItem( userID, comment, status));
-            this.notifyItemInserted(0);
-            Toast.makeText(context,"코멘트 등록",Toast.LENGTH_SHORT).show();
+
+        void addComment(String userID, String comment, String workName) { //대댓글 기능 구현 위해 position추가
+            mDataList.add(0, new CardItem(userID, comment, status));
+            notifyItemInserted(0);
+            Toast.makeText(context, "코멘트 등록", Toast.LENGTH_SHORT).show();
             //json
             JSONObject commentjs = new JSONObject();
             try {
-                commentjs.put(userID,comment);
+                commentjs.put(userID, comment);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -181,10 +184,9 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                         JSONObject jsonResponse = new JSONObject(response);
                         boolean success = jsonResponse.getBoolean("success");
 
-                        if(success){
+                        if (success) {
 
-                        }
-                        else{
+                        } else {
 
                         }
                     } catch (Exception e) {
@@ -196,6 +198,4 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
             RequestQueue queue = Volley.newRequestQueue(context);
             queue.add(workCommentRequest);
     }
-
-
 }
