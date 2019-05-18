@@ -43,7 +43,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     private final int TYPE_AUTH = 1; //author
 
     //생성자 - 값 전달
-    public commentRecyclerAdapter(String workName, String userID, Context context, List<CardItem> dataList, int itemLayout, JSONArray commentarr, int status){
+    public commentRecyclerAdapter(String workName, String userID, Context context, List<CardItem> dataList, int itemLayout, JSONArray commentarr, int status) {
         mDataList = dataList;
         this.workName = workName;
         this.context = context;
@@ -56,7 +56,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       View view;
+        View view;
         if (viewType == TYPE_AUD) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.row_comment, parent, false); //xml을 자바객체로 변환, view를 생성
@@ -77,9 +77,9 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
 
     @Override
     public int getItemViewType(int position) {
-        if (mDataList.get(position).getType() == 0){ //관객
+        if (mDataList.get(position).getType() == 0) { //관객
             return TYPE_AUD;
-        }else { //작가
+        } else { //작가
             return TYPE_AUTH;
         }
     }
@@ -95,8 +95,9 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
         TextView contents;
         Button delete_btn;
         Button reply_btn;
+
         //뷰홀더 생성자
-        public  ViewHolder(View itemView){
+        public ViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             contents = itemView.findViewById(R.id.contents);
@@ -123,49 +124,48 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
 
                     //대댓글 등록
                     replyEditText.setText("To" + mDataList.get(getAdapterPosition()).getName() + " : ");
-                     final AlertDialog dialog = builder.create();
-                        replyEdit_btn.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                String comment = replyEditText.getText().toString();
-                                addComment(userID, comment, workName);
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.show();
+                    final AlertDialog dialog = builder.create();
+                    replyEdit_btn.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            String comment = replyEditText.getText().toString();
+                            addComment(userID, comment, workName);
+                            dialog.dismiss();
+
+                            //여기에 notification보내는 코드 삽입
+                            //조건 판정 - 일단 구현 후 추가.
+                        }
+                    });
+                    dialog.show();
                 }
             });
         }
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-
-
-    void deleteComment(int pos) {
-        if (userID == mDataList.get(pos).getName()) {
-            try {
-                Toast.makeText(context, "코멘트 삭제", Toast.LENGTH_SHORT).show();
-                mDataList.remove(pos);
-                notifyItemRemoved(pos);
-                notifyItemRangeChanged(pos, mDataList.size());
-                //json
-                commentarr.remove(pos);
-            } catch (IndexOutOfBoundsException ex) {
-                ex.printStackTrace();
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        void deleteComment(int pos) {
+            if (userID == mDataList.get(pos).getName()) {
+                try {
+                    Toast.makeText(context, "코멘트 삭제", Toast.LENGTH_SHORT).show();
+                    mDataList.remove(pos);
+                    notifyItemRemoved(pos);
+                    notifyItemRangeChanged(pos, mDataList.size());
+                    //json
+                    commentarr.remove(pos);
+                } catch (IndexOutOfBoundsException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                Toast.makeText(context, "삭제할 권한이 없습니다", Toast.LENGTH_SHORT).show();
             }
         }
-        else {
-            Toast.makeText(context, "삭제할 권한이 없습니다", Toast.LENGTH_SHORT).show();
-        }
-    }
 
-    void addComment(String userID, String comment, String workName){ //대댓글 기능 구현 위해 position추가
-            mDataList.add(0,new CardItem( userID, comment, status));
-            this.notifyItemInserted(0);
-            Toast.makeText(context,"코멘트 등록",Toast.LENGTH_SHORT).show();
+        void addComment(String userID, String comment, String workName) { //대댓글 기능 구현 위해 position추가
+            mDataList.add(0, new CardItem(userID, comment, status));
+            notifyItemInserted(0);
+            Toast.makeText(context, "코멘트 등록", Toast.LENGTH_SHORT).show();
             //json
             JSONObject commentjs = new JSONObject();
             try {
-                commentjs.put(userID,comment);
+                commentjs.put(userID, comment);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -178,10 +178,9 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                         JSONObject jsonResponse = new JSONObject(response);
                         boolean success = jsonResponse.getBoolean("success");
 
-                        if(success){
+                        if (success) {
 
-                        }
-                        else{
+                        } else {
 
                         }
                     } catch (Exception e) {
@@ -192,5 +191,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
             WorkCommentRequest workCommentRequest = new WorkCommentRequest(userID, workName, mDataList.get(0).getContents(), 0, listener); //수정 필요
             RequestQueue queue = Volley.newRequestQueue(context);
             queue.add(workCommentRequest);
+        }
     }
 }
+
