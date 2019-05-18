@@ -122,7 +122,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                     final EditText replyEditText = (EditText) view.findViewById(R.id.replyEditText);
 
                     //대댓글 등록
-                    replyEditText.setText(mDataList.get(getAdapterPosition()).getName());
+                    replyEditText.setText("To" + mDataList.get(getAdapterPosition()).getName() + " : ");
                      final AlertDialog dialog = builder.create();
                         replyEdit_btn.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
