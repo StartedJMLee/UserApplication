@@ -39,33 +39,25 @@ public class WorkPageActivity extends AppCompatActivity {
     private EditText editComment;
 
     final static private String TAG_COMMENTJSON = "showcommentlist";
-    private String userID;
+    //작품 정보
+    private String author_id;
     private String workName;
-    private VisitedPages visitedPages;
+    private String author;
+    private String account;
+    private String site;
+    //권한 관련
+    private String userID;
+
     private Work work;
     private int status; //0:관람객 1:작가
-
+    //싱글톤 객체
+    private VisitedPages visitedPages;
     //임시 변수
     private int id; //임시 변수
     private List<CardItem> savedCommentDate;
     private List<CardItem> commentData;
 
-    //get&set
-    public int getStatus() {
-        return status;
-    }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,17 +90,23 @@ public class WorkPageActivity extends AppCompatActivity {
             work = new Work(id, workName, "The Smiths", "Morrisey & Marr", "Menchester");
           //  visitedPages.addToVisitedWorkNames(workName);
 
+
         }
-        /*else if (id == 1) {
-            work = new Work(id, "Blue Monday", "New Order", "Post Joy Division", "Menchester");
-            visitedPages.addToVisitedWorkNames("Blue Monday");
-        }*/
+
 
         //계정
         //userID = "tempID";
+        //테스트용 값 ---------------------
+       // status = 0;
+        author = "The Smiths";
+        account = "Morrisey & Marr";
+        site = "Menchester";
+        //userID = "tempID";
+        //---------------------------------
 
-        //유저id와 작품의 작가id를 match하여 status 판단하는 함수필요.
-        /*makeAccountActivity에서 : 작가로 계정 생성 시 전시프로젝트에서 등록한 메일과 match해서 권한 검증하고, 작품 id랑 작가 id 연결시킴.
+        //status 판단 함수
+        /*유저id와 작품의 작가id를 match하여 status 판단하는 함수필요.
+        makeAccountActivity에서 : 작가로 계정 생성 시 전시프로젝트에서 등록한 메일과 match해서 권한 검증하고, 작품 id랑 작가 id 연결시킴.
         연결한 작품id와 work객체의 id 일치하는지 확인해서 일치하면 status 1, 아니면 status 0.
         결과적으로 작가 status인 페이지에서는 파란 뷰타입으로 댓글이 달리고 관객 status인 페이지에서는 일반 뷰타입으로 댓글 달 수 있음. */
 
@@ -116,10 +114,10 @@ public class WorkPageActivity extends AppCompatActivity {
 
 
         //work information view
-        workname.setText(work.getName());
-        workaccount_view.setText(work.getAccount());
-        workauthor_view.setText(work.getAuthor());
-        worksite_view.setText(work.getSite());
+        workname.setText(workName);
+        workaccount_view.setText(account);
+        workauthor_view.setText(author);
+        worksite_view.setText(site);
 
         //RecyclerView
         RecyclerView recyclerView = findViewById(R.id.comment_recycler);
@@ -144,7 +142,7 @@ public class WorkPageActivity extends AppCompatActivity {
        // }
 
         //Adapter
-        final commentRecyclerAdapter adapter = new commentRecyclerAdapter(this,this, dataList, R.layout.row_comment, commentarr); //어댑터 수정
+        final commentRecyclerAdapter adapter = new commentRecyclerAdapter(workName,userID, this, dataList, R.layout.row_comment, commentarr, status); //어댑터 수정
         recyclerView.setAdapter(adapter);
 
         //코멘트 등록
@@ -154,7 +152,7 @@ public class WorkPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String comment = editComment.getText().toString();
-                adapter.addComment(userID,comment,id,work.getName());
+                adapter.addComment(userID,comment,workName);  //id?
             }
         });
 
