@@ -124,6 +124,10 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                     //대댓글 등록
                     replyEditText.setText("To" + mDataList.get(getAdapterPosition()).getName() + " : ");
                     final AlertDialog dialog = builder.create();
+                    /*디버깅 해 보니 이 밑으로 오류가 납니다. 위의 final Button replyEdit_btn = (Button) view.findViewById(R.id.reply_btn); 수행 후
+                    * replyEdit_btn의 값이 null로 나오는 걸로 보아 저부분에서 뭔가 문제가 있는 것 같습니다.
+                    * replyEdit_btn 값이 null이어서 밑에  replyEdit_btn.setOnClickListener을 실행하면 바로 오류나서 앱이 종료되는 것 같습니다
+                    * */
                     replyEdit_btn.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             String comment = replyEditText.getText().toString();
