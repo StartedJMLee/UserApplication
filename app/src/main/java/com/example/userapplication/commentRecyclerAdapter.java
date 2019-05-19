@@ -1,6 +1,7 @@
 package com.example.userapplication;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -16,13 +17,21 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
@@ -147,19 +156,39 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 
 
-    void deleteComment(int pos) {
+    void deleteComment(final int pos) {
         if (userID.equals(mDataList.get(pos).getName())) {
-            try {
-                Toast.makeText(context, "코멘트 삭제", Toast.LENGTH_SHORT).show();
-                mDataList.remove(pos);
-                notifyItemRemoved(pos);
-                notifyItemRangeChanged(pos, mDataList.size());
-                //json
-                commentarr.remove(pos);
-            } catch (IndexOutOfBoundsException ex) {
-                ex.printStackTrace();
-            }
+            int deletecommentid = 0;
+            String postdata = null;
 
+            deletecommentid = mDataList.get(pos).getCommentid();
+            DeleteCommentRequest deleteCommentRequest = new DeleteCommentRequest();
+
+            try {
+                postdata = deleteCommentRequest.execute("http://lloasd33.cafe24.com/deletecomment.php", String.valueOf(deletecommentid)).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            try {
+                JSONObject jsonResponse = new JSONObject(postdata);
+                boolean success = jsonResponse.getBoolean("success");
+
+                if (success) {
+
+                    mDataList.remove(pos);
+                    notifyItemRemoved(pos);
+                    notifyItemRangeChanged(pos, mDataList.size());
+                    Toast.makeText(context, "코멘트 삭제", Toast.LENGTH_SHORT).show();
+                    //json
+                    commentarr.remove(pos);
+                } else {
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         }
         else {
@@ -169,7 +198,8 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
 
 
         void addComment(String userID, String comment, String workName) { //대댓글 기능 구현 위해 position추가
-            mDataList.add(0, new CardItem(userID, comment, status));
+        // commentid는 코멘트 저장할 때 db에서 알아서 값 넣어주게 해놔서 여기서는 그냥 0 넣는걸로 해놨습니다. 여기서 0 넣어도 디비에서는 이 값으로 저장 안 됩니다 그냥 더미데이터입니다
+            mDataList.add(0, new CardItem(0, userID, comment, status));
             notifyItemInserted(0);
             Toast.makeText(context, "코멘트 등록", Toast.LENGTH_SHORT).show();
             //json
@@ -198,8 +228,56 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                     }
                 }
             };
-            WorkCommentRequest workCommentRequest = new WorkCommentRequest(userID, workName, mDataList.get(0).getContents(), 0, listener); //수정 필요
+            WorkCommentRequest workCommentRequest = new WorkCommentRequest(userID, workName, mDataList.get(0).getContents(), status, listener); //수정 필요
             RequestQueue queue = Volley.newRequestQueue(context);
             queue.add(workCommentRequest);
+    }
+
+    // 코멘트 삭제 서버 통신 부분
+    private class DeleteCommentRequest extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String result = null;
+            try {
+                String url = strings[0];
+                String commentid = strings[1];
+                URL URLObject = new URL(url);
+                HttpURLConnection con = (HttpURLConnection) URLObject.openConnection();
+
+                String postparam = "commentid=" + commentid;
+
+                con.setRequestMethod("POST");
+                con.setDoInput(true);
+                con.setDoOutput(true);
+                con.connect();
+
+                OutputStream outputStream = con.getOutputStream();
+                outputStream.write(postparam.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+                InputStream inputStream = con.getInputStream();
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+
+                result =  sb.toString();
+                return result;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return  null;
+            }
+
+        }
     }
 }

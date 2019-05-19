@@ -169,7 +169,7 @@ public class WorkPageActivity extends AppCompatActivity {
            JSONObject jsonObject = new JSONObject(postdata);
            JSONArray jsonArray = jsonObject.getJSONArray(TAG_COMMENTJSON);
            for (int i = 0; i < jsonArray.length(); i++) {
-                CardItem cardItem = new CardItem(jsonArray.getJSONObject(i).getString("userID"), jsonArray.getJSONObject(i).getString("comment"),jsonArray.getJSONObject(i).getInt("status"));
+                CardItem cardItem = new CardItem(jsonArray.getJSONObject(i).getInt("commentid"),jsonArray.getJSONObject(i).getString("userID"), jsonArray.getJSONObject(i).getString("comment"),jsonArray.getJSONObject(i).getInt("status"));
                savedCommentDate.add(0,cardItem);
            }
        } catch (JSONException e) {

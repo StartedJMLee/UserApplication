@@ -6,17 +6,19 @@ import android.support.annotation.RequiresApi;
 import java.util.Objects;
 
 public class CardItem {
-
+    private int commentid = 0;
     private String name;
     private String contents;
     private int type; //관람객0, 작가1
 
-    public CardItem(String name, String contents, int type) {
-
+    public CardItem(int commentid, String name, String contents, int type) {
+        this.commentid = commentid;
         this.name = name;
         this.contents = contents;
         this.type = type;
     }
+
+    public int getCommentid(){return commentid;}
 
     public String getName() {
         return name;
@@ -49,6 +51,7 @@ public class CardItem {
         if (o == null || getClass() != o.getClass()) return false;
         CardItem cardItem = (CardItem) o;
         return type == cardItem.type &&
+                commentid == cardItem.commentid &&
                 Objects.equals(name, cardItem.name) &&
                 Objects.equals(contents, cardItem.contents);
     }
@@ -62,7 +65,8 @@ public class CardItem {
     @Override
     public String toString() {
         return "CardItem{" +
-                "name='" + name + '\'' +
+                "commentid=" + commentid + '\'' +
+                "name=" + name + '\'' +
                 ", contents='" + contents + '\'' +
                 ", type=" + type +
                 '}';
