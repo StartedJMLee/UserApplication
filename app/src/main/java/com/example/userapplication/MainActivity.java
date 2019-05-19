@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent= new Intent(
                         MainActivity.this,
                         QRcodeScanner.class);
+                intent.putExtra("userID", userID);
+                intent.putExtra("usertype", usertype);
                 startActivity(intent);
             }
         });
