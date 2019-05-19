@@ -127,7 +127,7 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                     View view = LayoutInflater.from(context)
                             .inflate(R.layout.comment_dialog, null, false);
                     builder.setView(view);
-                    final Button replyEdit_btn = (Button) view.findViewById(R.id.reply_btn);
+                    Button replyEdit_btn = (Button) view.findViewById(R.id.replyEdit_btn);
                     final EditText replyEditText = (EditText) view.findViewById(R.id.replyEditText);
 
                     //대댓글 등록
