@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private Button scan_btn;
     private Button search_btn;
@@ -22,11 +24,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         visitedPages.getInstance();
-        ArrayAdapter adapter;
-        if (visitedPages != null) {
-            adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, visitedPages.getVisitedWorkNames());}
-        else{
-            adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1);}
+        List<String> pageData = visitedPages.getVisitedWorkNames();
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, pageData);
         ListView listview = (ListView) findViewById(R.id.visitedView);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
