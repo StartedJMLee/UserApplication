@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         visitedPages.getInstance();
-        if(visitedPages !=null) {
             ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, visitedPages.getVisitedWorkNames());
             ListView listview = (ListView) findViewById(R.id.visitedView);
             listview.setAdapter(adapter);
@@ -30,14 +29,17 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView parent, View v, int position, long id) {
                     // get TextView's Text.
-                    String workName = (String) parent.getItemAtPosition(position);
-                    // TODO
-                    Intent intent = new Intent(MainActivity.this, WorkPageActivity.class);
-                    intent.putExtra("workName", workName);
-                    startActivity(intent);
+                    if (visitedPages != null) {
+                        String workName = (String) parent.getItemAtPosition(position);
+                        // TODO
+                        Intent intent = new Intent(MainActivity.this, WorkPageActivity.class);
+                        intent.putExtra("workName", workName);
+                        startActivity(intent);
+                    }
                 }
             });
-        }
+
+
 
         userID = getIntent().getStringExtra("userID");
         usertype = getIntent().getIntExtra("usertype", 0);
