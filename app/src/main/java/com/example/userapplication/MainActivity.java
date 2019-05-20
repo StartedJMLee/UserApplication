@@ -22,22 +22,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         visitedPages.getInstance();
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, visitedPages.getVisitedWorkNames());
-            ListView listview = (ListView) findViewById(R.id.visitedView);
-            listview.setAdapter(adapter);
-            listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView parent, View v, int position, long id) {
-                    // get TextView's Text.
-                    if (visitedPages != null) {
-                        String workName = (String) parent.getItemAtPosition(position);
-                        // TODO
-                        Intent intent = new Intent(MainActivity.this, WorkPageActivity.class);
-                        intent.putExtra("workName", workName);
-                        startActivity(intent);
-                    }
+        ArrayAdapter adapter;
+        if (visitedPages != null) {
+            adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, visitedPages.getVisitedWorkNames());}
+        else{
+            adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1);}
+        ListView listview = (ListView) findViewById(R.id.visitedView);
+        listview.setAdapter(adapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+                // get TextView's Text.
+                if (visitedPages != null) {
+                    String workName = (String) parent.getItemAtPosition(position);
+                    // TODO
+                    Intent intent = new Intent(MainActivity.this, WorkPageActivity.class);
+                    intent.putExtra("workName", workName);
+                    startActivity(intent);
                 }
-            });
+            }
+        });
+
 
 
 
