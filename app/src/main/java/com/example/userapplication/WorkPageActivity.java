@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static com.example.userapplication.VisitedPages.getInstance;
+
 public class WorkPageActivity extends AppCompatActivity {
     private TextView workname, workaccount_view, workauthor_view, worksite_view;
     private Button add_btn;
@@ -84,7 +86,7 @@ public class WorkPageActivity extends AppCompatActivity {
         commentData.addAll(savedCommentDate);
 
         //visitedPages 싱글톤
-        visitedPages.getInstance();
+        visitedPages = VisitedPages.getInstance();
         visitedPages.addToVisitedWorkNames(workName);
 
 

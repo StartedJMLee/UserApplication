@@ -23,11 +23,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        visitedPages.getInstance();
-        List<String> pageData = visitedPages.getVisitedWorkNames();
+        visitedPages = VisitedPages.getInstance();
         ArrayAdapter adapter;
-        if (pageData != null ) {  adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1); }
-        else { adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, pageData);}
+        if (visitedPages == null ) {  adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1); }
+        else { adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, visitedPages.getVisitedWorkNames());}
         ListView listview = (ListView) findViewById(R.id.visitedView);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
