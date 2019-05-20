@@ -85,10 +85,8 @@ public class WorkPageActivity extends AppCompatActivity {
 
         //visitedPages 싱글톤
         visitedPages.getInstance();
+        visitedPages.addToVisitedWorkNames(workName);
 
-
-
-          //  visitedPages.addToVisitedWorkNames(workName);
 
 
 

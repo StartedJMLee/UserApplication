@@ -25,7 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
         visitedPages.getInstance();
         List<String> pageData = visitedPages.getVisitedWorkNames();
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, pageData);
+        ArrayAdapter adapter;
+        if (pageData != null ) {  adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1); }
+        else { adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, pageData);}
         ListView listview = (ListView) findViewById(R.id.visitedView);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
