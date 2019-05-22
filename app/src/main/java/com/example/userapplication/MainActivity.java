@@ -46,10 +46,9 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, WorkPageActivity.class);
                 //작품 정보 전달
                 List<Work> worklist = visited.getVisitedWorks();
-                //intent.putExtra("workName", worklist.get(position).getName());
-                intent.putExtra("workName", "Bigmouth Strikes Again");
+                intent.putExtra("workName", worklist.get(position).getName());
+                intent.putExtra("userID", userID);
                 intent.putExtra("usertype", usertype);
-                // 정보들 하나의 class로 만들어서 관리할 수 있는데 일단 작동되는지 보려고 이렇게 구현했습니다
                 intent.putExtra("authorname", worklist.get(position).getAuthorName());
                 intent.putExtra("workdescription", worklist.get(position).getDescription());
                 intent.putExtra("worksector", worklist.get(position).getSector());
