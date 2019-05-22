@@ -14,12 +14,13 @@ public class makeAccountRequest extends StringRequest {
     private Map<String, String> parameter;
 
 
-    public makeAccountRequest(String userID, String password, String userEmail, int usertype, Response.Listener<String> listener){
+    public makeAccountRequest(String userID, String password, String userEmail, String userName, int usertype, Response.Listener<String> listener){
         super(Method.POST, URL, listener, null);
         parameter = new HashMap();
         parameter.put("userID", userID);
         parameter.put("password", password);
         parameter.put("userEmail", userEmail);
+        parameter.put("authorname", userName);
         parameter.put("usertype", String.valueOf(usertype));
     }
 

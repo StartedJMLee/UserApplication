@@ -22,6 +22,7 @@ public class makeAccountActivity extends AppCompatActivity {
     private EditText editUserID;
     private EditText editPassword;
     private EditText editUserEmail;
+    private EditText editUserName;
     private Spinner typeChoice;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class makeAccountActivity extends AppCompatActivity {
         editUserID = findViewById(R.id.editUserID);
         editPassword = findViewById(R.id.editPassword);
         editUserEmail = findViewById(R.id.edituserEmail);
+        editUserName = findViewById(R.id.editUserName);
         typeChoice = findViewById(R.id.typeChoice);
 
 
@@ -81,7 +83,7 @@ public class makeAccountActivity extends AppCompatActivity {
                     }
                 };
 
-                makeAccountRequest request = new makeAccountRequest(editUserID.getText().toString(), editPassword.getText().toString(), editUserEmail.getText().toString(), type, listener);
+                makeAccountRequest request = new makeAccountRequest(editUserID.getText().toString(), editPassword.getText().toString(), editUserEmail.getText().toString(),editUserName.getText().toString(),  type, listener);
                 RequestQueue queue = Volley.newRequestQueue(makeAccountActivity.this);
                 queue.add(request);
 
