@@ -9,48 +9,37 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class VisitedPages {
-    private String userID;
-    private List<Work> visitedWorks; //Work의 List로 해야되겠다..
+    private List<Work> visitedWorks;
+    private List<String> visitedWorkNames;
 
+    //생성자
     private VisitedPages() {
-        visitedWorks = new ArrayList<Work>();
+        visitedWorks = new ArrayList<>();
+        visitedWorkNames = new ArrayList<>();
     }
 
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
+    //Getter & Setter
     public List<Work> getVisitedWorks() {
         return visitedWorks;
     }
-    /*
-    public void setVisitedWorks(List<Work> visitedWorks) {
-        this.visitedWorks = visitedWorks;
+    public void addVisitedWorks(Work work) {
+        if(!visitedWorks.contains(work)) //추가할 시 중복 방지
+            this.visitedWorks.add(work);
     }
-    */
     public List<String> getVisitedWorkNames() {
-        List<String> visitedWorkNames = new ArrayList<String>();
-        for(int i=0;i<visitedWorks.size();i++)
-             visitedWorkNames.add(visitedWorks.get(i).getName());
-        return visitedWorkNames;
+        return this.visitedWorkNames;
+    }
+    public void addVisitedWorkNames(String name){
+        if(!visitedWorkNames.contains(name)) //추가할 시 중복 방지
+            this.visitedWorkNames.add(name);
     }
 
-
-    public void addToVisitedWorks(Work work) {
-        this.visitedWorks.add(work);
-    }
-
+    //싱글턴 객체 선언
     private static VisitedPages instance = null;
 
     public static synchronized VisitedPages getInstance(){
         if(null == instance){
             instance = new VisitedPages();
-            for (int i=0;i<2;i++)
-                instance.addToVisitedWorks(new Work("Bigmouth Strikes Again","The Smiths","Morrisey & Marr","없음"));
         }
         return instance;
     }

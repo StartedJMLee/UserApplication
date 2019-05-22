@@ -20,45 +20,40 @@ import java.util.ListIterator;
 public class MainActivity extends AppCompatActivity {
     private Button scan_btn;
     private Button search_btn;
-    private VisitedPages visited;
     private int usertype;
     private String userID;
     ArrayAdapter adapter;
-    ListView listview;
+    private VisitedPages visitedPages;
 
-    List<String> inAdapterList = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        userID = getIntent().getStringExtra("userID");
+        usertype = getIntent().getIntExtra("usertype", 0);
 
-        visited = VisitedPages.getInstance();
-        inAdapterList = visited.getVisitedWorkNames();
+        //싱글턴
+        visitedPages = VisitedPages.getInstance();
 
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,inAdapterList);
-        listview = (ListView) findViewById(R.id.visitedView);
+        //리스트뷰 & 어댑터
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,visitedPages.getVisitedWorkNames());
+        ListView listview = (ListView) findViewById(R.id.visitedView);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View v, int position, long id) {
-                    String workName = (String) parent.getItemAtPosition(position);
-                    // TODO
-                    Intent intent = new Intent(MainActivity.this, WorkPageActivity.class);
+                Intent intent = new Intent(MainActivity.this, WorkPageActivity.class);
                 //작품 정보 전달
-                List<Work> worklist = visited.getVisitedWorks();
-                intent.putExtra("workName", worklist.get(position).getName());
+                List<Work> worklist = visitedPages.getVisitedWorks();
+                intent.putExtra("workname", worklist.get(position).getName());
                 intent.putExtra("userID", userID);
                 intent.putExtra("usertype", usertype);
                 intent.putExtra("authorname", worklist.get(position).getAuthorName());
                 intent.putExtra("workdescription", worklist.get(position).getDescription());
                 intent.putExtra("worksector", worklist.get(position).getSector());
                 startActivity(intent);
-
             }
         });
-
-        userID = getIntent().getStringExtra("userID");
-        usertype = getIntent().getIntExtra("usertype", 0);
 
         //activity intent
         Button scan_btn = (Button) findViewById(R.id.scan_btn);
@@ -93,15 +88,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        //visited = VisitedPages.getInstance();
-        //adapter.notifyDataSetChanged();
-        inAdapterList = visited.getVisitedWorkNames();
-        //Toast.makeText(getApplicationContext(), "싱글턴에"+visited.getVisitedWorks().size()+"개의 객체 저장", Toast.LENGTH_SHORT).show();
-        //adapter.notifyDataSetChanged();
-        Toast.makeText(getApplicationContext(), "어댑터데이터:"+ inAdapterList.get(inAdapterList.size()-1), Toast.LENGTH_SHORT).show();
-        //adapter.notifyDataSetChanged();
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,inAdapterList);
-        listview = (ListView) findViewById(R.id.visitedView);
-        listview.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 }
