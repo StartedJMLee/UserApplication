@@ -87,7 +87,7 @@ public class WorkPageActivity extends AppCompatActivity {
 
         //visitedPages 싱글톤
         visitedPages = VisitedPages.getInstance();
-        visitedPages.addToVisitedWorkNames(workName);
+        visitedPages.addToVisitedWorks(new Work(workName,author,account,site));
 
 
 

@@ -7,27 +7,16 @@ import java.util.List;
 import java.util.Objects;
 
 public class Work {
-    private int id;
     private String name;
-    private String author;
-    private String account;
-    private String site;
-    private List<CardItem> comments;
+    private String authorName;
+    private String description;
+    private String sector;
 
-    public Work(int id, String name, String author, String account, String site) {
-        this.id = id;
+    public Work(String name, String authorName, String description, String sector) {
         this.name = name;
-        this.author = author;
-        this.account = account;
-        this.site = site;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.authorName = authorName;
+        this.description = description;
+        this.sector = sector;
     }
 
     public String getName() {
@@ -38,67 +27,30 @@ public class Work {
         this.name = name;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getAuthorName() {
+        return authorName;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
-    public String getAccount() {
-        return account;
+    public String getDescription() {
+        return description;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getSite() {
-        return site;
+    public String getSector() {
+        return sector;
     }
 
-    public void setSite(String site) {
-        this.site = site;
+    public void setSector(String sector) {
+        this.sector = sector;
     }
 
-    public List<CardItem> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CardItem> comments) {
-        this.comments = comments;
-    }
-
-    @Override
-    public String toString() {
-        return "Work{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", author='" + author + '\'' +
-                ", account='" + account + '\'' +
-                ", site='" + site + '\'' +
-                ", comments=" + comments +
-                '}';
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Work work = (Work) o;
-        return id == work.id &&
-                Objects.equals(name, work.name) &&
-                Objects.equals(author, work.author) &&
-                Objects.equals(account, work.account) &&
-                Objects.equals(site, work.site) &&
-                Objects.equals(comments, work.comments);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, author, account, site, comments);
-    }
 }
+
+
