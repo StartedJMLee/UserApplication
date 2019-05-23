@@ -141,8 +141,11 @@ public class commentRecyclerAdapter extends RecyclerView.Adapter<commentRecycler
                     replyEdit_btn.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             String comment = replyEditText.getText().toString();
-                            addComment(userID, comment, workName);
-                            dialog.dismiss();
+                            if (comment.equals("")) {
+                                Toast.makeText(context, "내용이 없습니다.", LENGTH_SHORT).show();}
+                            else{
+                                addComment(userID, comment, workName);
+                                dialog.dismiss();}
 
                             //여기에 notification보내는 코드 삽입
                             //조건 판정 - 일단 구현 후 추가.

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static com.example.userapplication.VisitedPages.getInstance;
 
 public class WorkPageActivity extends AppCompatActivity {
@@ -148,7 +149,10 @@ public class WorkPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String comment = editComment.getText().toString();
-                adapter.addComment(userID,comment,workName);  //id?
+                if (comment.equals("")) {
+                    Toast.makeText(getApplicationContext(), "내용이 없습니다.", LENGTH_SHORT).show();}
+                else{
+                adapter.addComment(userID,comment,workName); }
             }
         });
 
